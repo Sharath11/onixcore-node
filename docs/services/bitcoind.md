@@ -1,45 +1,45 @@
-# Qtumcoin Service
+# Onixcoin Service
 
 ## Configuration
 
-The default configuration will include a "spawn" configuration in "qtumd". This defines the location of the block chain database and the location of the `qtumd` daemon executable. The below configuration points to a local clone of `qtum`, and will start `qtumd` automatically with your Node.js application.
+The default configuration will include a "spawn" configuration in "onixd". This defines the location of the block chain database and the location of the `onixd` daemon executable. The below configuration points to a local clone of `onix`, and will start `onixd` automatically with your Node.js application.
 
 ```json
   "servicesConfig": {
-    "qtumd": {
+    "onixd": {
       "spawn": {
-        "datadir": "/home/user/.qtum",
-        "exec": "/home/user/qtum-core/src/qtumd"
+        "datadir": "/home/user/.onix",
+        "exec": "/home/user/onix-core/src/onixd"
       }
     }
   }
 ```
 
-It's also possible to connect to separately managed `qtumd` processes with round-robin quering, for example:
+It's also possible to connect to separately managed `onixd` processes with round-robin quering, for example:
 
 ```json
   "servicesConfig": {
-    "qtumd": {
+    "onixd": {
       "connect": [
         {
           "rpchost": "127.0.0.1",
           "rpcport": 30521,
-          "rpcuser": "qtumuser1",
-          "rpcpassword": "qtumrpcpassword1",
+          "rpcuser": "onixuser1",
+          "rpcpassword": "onixrpcpassword1",
           "zmqpubrawtx": "tcp://127.0.0.1:30611"
         },
         {
           "rpchost": "127.0.0.1",
           "rpcport": 30522,
-          "rpcuser": "qtumuser2",
-          "rpcpassword": "qtumrpcpassword2",
+          "rpcuser": "onixuser2",
+          "rpcpassword": "onixrpcpassword2",
           "zmqpubrawtx": "tcp://127.0.0.1:30622"
         },
         {
           "rpchost": "127.0.0.1",
           "rpcport": 30523,
-          "rpcuser": "qtumuser3",
-          "rpcpassword": "qtumrpcpassword3",
+          "rpcuser": "onixuser3",
+          "rpcpassword": "onixrpcpassword3",
           "zmqpubrawtx": "tcp://127.0.0.1:30633"
         }
       ]
@@ -54,7 +54,7 @@ It's also possible to connect to separately managed `qtumd` processes with round
 Methods are available by directly interfacing with the service:
 
 ```js
-node.services.qtumd.<methodName>
+node.services.onixd.<methodName>
 ```
 
 ### Chain
@@ -65,12 +65,12 @@ node.services.qtumd.<methodName>
 // gives the block hashes sorted from low to high within a range of timestamps
 var high = 1460393372; // Mon Apr 11 2016 12:49:25 GMT-0400 (EDT)
 var low = 1460306965; // Mon Apr 10 2016 12:49:25 GMT-0400 (EDT)
-node.services.qtumd.getBlockHashesByTimestamp(high, low, function(err, blockHashes) {
+node.services.onixd.getBlockHashesByTimestamp(high, low, function(err, blockHashes) {
   //...
 });
 
 // get the current tip of the chain
-node.services.qtumd.getBestBlockHash(function(err, blockHash) {
+node.services.onixd.getBestBlockHash(function(err, blockHash) {
   //...
 })
 ```
@@ -79,17 +79,17 @@ node.services.qtumd.getBestBlockHash(function(err, blockHash) {
 
 ```js
 // gives a boolean if the daemon is fully synced (not the initial block download)
-node.services.qtumd.isSynced(function(err, synced) {
+node.services.onixd.isSynced(function(err, synced) {
   //...
 })
 
 // gives the current estimate of blockchain download as a percentage
-node.services.qtumd.syncPercentage(function(err, percent) {
+node.services.onixd.syncPercentage(function(err, percent) {
   //...
 });
 
 // gives information about the chain including total number of blocks
-node.services.qtumd.getInfo(function(err, info) {
+node.services.onixd.getInfo(function(err, info) {
   //...
 });
 ```
@@ -99,7 +99,7 @@ node.services.qtumd.getInfo(function(err, info) {
 ```js
 // will generate a block for the "regtest" network (development purposes)
 var numberOfBlocks = 10;
-node.services.qtumd.generateBlock(numberOfBlocks, function(err, blockHashes) {
+node.services.onixd.generateBlock(numberOfBlocks, function(err, blockHashes) {
   //...
 });
 ```
@@ -108,30 +108,30 @@ node.services.qtumd.generateBlock(numberOfBlocks, function(err, blockHashes) {
 
 **Getting Block Information**
 
-It's possible to query blocks by both block hash and by height. Blocks are given as Node.js Buffers and can be parsed via qtumcore:
+It's possible to query blocks by both block hash and by height. Blocks are given as Node.js Buffers and can be parsed via onixcore:
 
 ```js
 var blockHeight = 0;
-node.services.qtumd.getRawBlock(blockHeight, function(err, blockBuffer) {
+node.services.onixd.getRawBlock(blockHeight, function(err, blockBuffer) {
   if (err) {
     throw err;
   }
-  var block = qtumcore.Block.fromBuffer(blockBuffer);
+  var block = onixcore.Block.fromBuffer(blockBuffer);
   console.log(block);
 };
 
-// get a qtumcore object of the block (as above)
-node.services.qtumd.getBlock(blockHash, function(err, block) {
+// get a onixcore object of the block (as above)
+node.services.onixd.getBlock(blockHash, function(err, block) {
   //...
 };
 
 // get only the block header and index (including chain work, height, and previous hash)
-node.services.qtumd.getBlockHeader(blockHeight, function(err, blockHeader) {
+node.services.onixd.getBlockHeader(blockHeight, function(err, blockHeader) {
   //...
 });
 
 // get the block with a list of txids
-node.services.qtumd.getBlockOverview(blockHash, function(err, blockOverview) {
+node.services.onixd.getBlockOverview(blockHash, function(err, blockOverview) {
   //...
 };
 ```
@@ -142,20 +142,20 @@ Get a transaction asynchronously by reading it from disk:
 
 ```js
 var txid = '7426c707d0e9705bdd8158e60983e37d0f5d63529086d6672b07d9238d5aa623';
-node.services.qtumd.getRawTransaction(txid, function(err, transactionBuffer) {
+node.services.onixd.getRawTransaction(txid, function(err, transactionBuffer) {
   if (err) {
     throw err;
   }
-  var transaction = qtumcore.Transaction().fromBuffer(transactionBuffer);
+  var transaction = onixcore.Transaction().fromBuffer(transactionBuffer);
 });
 
-// get a qtumcore object of the transaction (as above)
-node.services.qtumd.getTransaction(txid, function(err, transaction) {
+// get a onixcore object of the transaction (as above)
+node.services.onixd.getTransaction(txid, function(err, transaction) {
   //...
 });
 
 // retrieve the transaction with input values, fees, spent and block info
-node.services.qtumd.getDetailedTransaction(txid, function(err, transaction) {
+node.services.onixd.getDetailedTransaction(txid, function(err, transaction) {
   //...
 });
 ```
@@ -164,11 +164,11 @@ Send a transaction to the network:
 
 ```js
 var numberOfBlocks = 3;
-node.services.qtumd.estimateFee(numberOfBlocks, function(err, feesPerKilobyte) {
+node.services.onixd.estimateFee(numberOfBlocks, function(err, feesPerKilobyte) {
   //...
 });
 
-node.services.qtumd.sendTransaction(transaction.serialize(), function(err, hash) {
+node.services.onixd.sendTransaction(transaction.serialize(), function(err, hash) {
   //...
 });
 ```
@@ -181,7 +181,7 @@ One of the most common uses will be to retrieve unspent outputs necessary to cre
 
 ```js
 var address = 'mgY65WSfEmsyYaYPQaXhmXMeBhwp4EcsQW';
-node.services.qtumd.getAddressUnspentOutputs(address, options, function(err, unspentOutputs) {
+node.services.onixd.getAddressUnspentOutputs(address, options, function(err, unspentOutputs) {
   // see below
 });
 ```
@@ -206,7 +206,7 @@ The `unspentOutputs` will have the format:
 
 ```js
 var address = 'mgY65WSfEmsyYaYPQaXhmXMeBhwp4EcsQW';
-node.services.qtumd.getAddressBalance(address, options, function(err, balance) {
+node.services.onixd.getAddressBalance(address, options, function(err, balance) {
   // balance will be in satoshis with "received" and "balance"
 });
 ```
@@ -215,7 +215,7 @@ node.services.qtumd.getAddressBalance(address, options, function(err, balance) {
 
 This method will give history of an address limited by a range of block heights by using the "start" and "end" arguments. The "start" value is the more recent, and greater, block height. The "end" value is the older, and lesser, block height. This feature is most useful for synchronization as previous history can be omitted. Furthermore for large ranges of block heights, results can be paginated by using the "from" and "to" arguments.
 
-If "queryMempool" is set as true (it is true by default), it will show unconfirmed transactions from the qtum mempool. However, if you specify "start" and "end", "queryMempool" is ignored and is always false.
+If "queryMempool" is set as true (it is true by default), it will show unconfirmed transactions from the onix mempool. However, if you specify "start" and "end", "queryMempool" is ignored and is always false.
 
 If "queryMempoolOnly" is set as true (it is false by default), it will show *only* unconfirmed transactions from mempool.
 
@@ -226,7 +226,7 @@ var options = {
   end: 344000,
   queryMempool: true // since we presented range, queryMempool will be ignored
 };
-node.services.qtumd.getAddressHistory(addresses, options, function(err, history) {
+node.services.onixd.getAddressHistory(addresses, options, function(err, history) {
   // see below
 });
 ```
@@ -259,7 +259,7 @@ var options = {
   noTxList: false
 };
 
-node.services.qtumd.getAddressSummary(address, options, function(err, summary) {
+node.services.onixd.getAddressSummary(address, options, function(err, summary) {
   // see below
 });
 ```
@@ -288,43 +288,43 @@ The `summary` will have the format (values are in satoshis):
 
 
 ## Events
-The Qtum Service exposes two events via the Bus, and there are a few events that can be directly registered:
+The Onix Service exposes two events via the Bus, and there are a few events that can be directly registered:
 
 ```js
-node.services.qtumd.on('tip', function(blockHash) {
+node.services.onixd.on('tip', function(blockHash) {
   // a new block tip has been added, if there is a rapid update (with a second) this will not emit every tip update
 });
 
-node.services.qtumd.on('tx', function(transactionBuffer) {
+node.services.onixd.on('tx', function(transactionBuffer) {
   // a new transaction has entered the mempool
 });
 
-node.services.qtumd.on('block', function(blockHash) {
+node.services.onixd.on('block', function(blockHash) {
   // a new block has been added
 });
 ```
 
 For details on instantiating a bus for a node, see the [Bus Documentation](../bus.md).
-- Name: `qtumd/rawtransaction`
-- Name: `qtumd/hashblock`
-- Name: `qtumd/addresstxid`, Arguments: [address, address...]
+- Name: `onixd/rawtransaction`
+- Name: `onixd/hashblock`
+- Name: `onixd/addresstxid`, Arguments: [address, address...]
 
 **Examples:**
 
 ```js
-bus.subscribe('qtumd/rawtransaction');
-bus.subscribe('qtumd/hashblock');
-bus.subscribe('qtumd/addresstxid', ['13FMwCYz3hUhwPcaWuD2M1U2KzfTtvLM89']);
+bus.subscribe('onixd/rawtransaction');
+bus.subscribe('onixd/hashblock');
+bus.subscribe('onixd/addresstxid', ['13FMwCYz3hUhwPcaWuD2M1U2KzfTtvLM89']);
 
-bus.on('qtumd/rawtransaction', function(transactionHex) {
+bus.on('onixd/rawtransaction', function(transactionHex) {
   //...
 });
 
-bus.on('qtumd/hashblock', function(blockhashHex) {
+bus.on('onixd/hashblock', function(blockhashHex) {
   //...
 });
 
-bus.on('qtumd/addresstxid', function(data) {
+bus.on('onixd/addresstxid', function(data) {
   // data.address;
   // data.txid;
 });
